@@ -1,0 +1,180 @@
+Password Management Utility tool
+
+Definitions:
+
+<field> :
+A field is an identifier by which it is possible to sort or search the passwords
+A field shall be composed of only the following character set.
+[A-Z][0-9]
+
+List of available fields
+- SERVICE
+- PASSWORD
+- NAME
+- PHONE
+- EMAIL
+
+
+<value> :
+A value is the data associated to aa field.
+A value maybe be passed as argument either directly (eg. Steam) or in quotes (eg. "Steam").
+A value can only be composed of printable characters.
+
+For now, a value may only be composed of ASCII characters.
+
+
+<id>   :
+Each entry is assigned a Unique IDentifier which can be used to reference that entry.
+
+
+<value>...:
+An expression followed by ... means that that expression can be repeated as many times as needed.
+
+
+
+Usage:
+
+--
+Print a small message about the basic usage of the program.
+
+pwu
+
+--
+Display a help menu
+
+pwu -h
+pwu --help
+
+Display help about a specific part of the program
+
+pwu -h     <subject>
+pwu --help <subject>
+
+List of possible value for <subject>
+-h, --help
+-l, --list
+-p, --print
+-n, --new
+-d, --delete
+-m, --modify
+-f, --file
+-i, --import
+
+--strict
+--where
+
+field
+id
+
+--
+List
+
+List all entries. Only shows their SERVICE field.
+
+pwu -l
+pwu --list
+
+Print all fields of the IDed entry.
+
+pwu -l     <id>
+pwu --list <id>
+
+Lists all entries corresponding to the fuzzy search on the given <field>.
+"fuzzy" here is an abuse of the term.
+The search will look for all entries which contain the <value>.
+The search is not case sensitive.
+
+pwu -lw            <field>=<value>
+pwu -l --where     <field>=<value>
+pwu --list --where <field>=<value>
+
+Lists all entries where the <field> and <value> match exactly.
+The search is case sensitive as well.
+
+pwu -lsw                    <field>=<value>
+pwu -ls --where             <field>=<value>
+pwu --list --strict --where <field>=<value>
+
+Proton pswd
+&aYoQaH=cvOBNqS@
+
+--
+Print field of entry
+
+pwu -p      <id> <field>
+pwu --print <id> <field>
+
+Prints the value of the specified field to the console with nothing else.
+This usage is intended for `pwu -p PASSWORD | xclip -sel clip`
+If no field is specified, then the PASSWORD field is printed.
+
+--
+New
+
+Generate and save new password
+
+pwu -n    <field>=<value>...
+pwu --new <field>=<value>...
+
+When a field is not specified, it will be asked in a prompt after running the command.
+If the PASSWORD field isn't specified and then left blank, a password will be randomly generated for that entry.
+The new entry will then be assigned an id.
+
+--
+Delete by ID
+
+pwu -d       <id>
+pwu --delete <id>
+
+Delete by field matching
+
+pwu -dw              <field>=<value>
+pwu -d --where       <field>=<value>
+pwu --delete --where <field>=<value>
+
+The deleted fields are exactly the same as the ones that would have been listed with `pwu --list --strict --where <field>=<name>`.
+
+--
+Modify by ID
+
+pwu -m       <id> <field>=<value>...
+pwu --modify <id> <field>=<value>...
+
+--
+Modify by ID without specifying the field values
+
+pwu -m       <id> <field>...
+pwu --modify <id> <field>...
+
+The user is then prompted with each specified field (if none then all).
+The old field value is displayed and the user can the type the new value for that field.
+If the user left the field modification prompt blank, the field is not modified.
+
+NB: It should be possible to specify some fields to modify by specifying their value in
+the command line arguments but also mix in unspecified fields with can then be prompted
+later by the program.
+
+--
+Change save file location
+
+pwu -f     <file_path>
+pwu --file <file_path>
+
+If <file_path> is not provided, then prints the current savefile path.
+
+This function tries to open the file at the location.
+If no file existed there, then it will try and create the file, reporting any access rights errors.
+If the file exists, then the user will be prompted with a confirmation message to delete all contents of the file.
+
+If successful however, no data will be tranfered from the previous save file.
+
+--
+Import from file
+
+pwu -i       <file_path>
+pwu --import <file_path>
+
+Import the data from another file.
+If that file is a valid PWU save file, then all the data on it will be copied to the current save file.
+
+--
