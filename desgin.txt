@@ -95,9 +95,6 @@ pwu -lsw                    <field>=<value>
 pwu -ls --where             <field>=<value>
 pwu --list --strict --where <field>=<value>
 
-Proton pswd
-&aYoQaH=cvOBNqS@
-
 --
 Print field of entry
 
