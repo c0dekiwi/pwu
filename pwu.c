@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -210,8 +211,11 @@ char *readentirefile(const char *filepath) {
 	struct stat statbuf;
 	rd = stat(filepath, &statbuf);
 	if (rd < 0) {
-		perror("stat");
-		return NULL;
+		if (errno != ENOENT) {
+			perror("stat");
+			return NULL;
+		}
+		return calloc(1, sizeof(char));
 	}
 	fsize = statbuf.st_size;
 
@@ -318,6 +322,16 @@ int load_entries(const char *file, struct entries *entries) {
 
 	filesv.str = filecontent;
 	filesv.len = strlen(filecontent);
+
+	if (filesv.len == 0) {
+		printf("File [%s] is empty. Initialising savefile.\n", file);
+		free(filecontent);
+		if (!resize_entries(entries)) {
+			fprintf(stderr, "[ERROR] load_entries: Out of memory.\n");
+			return -1;
+		}
+		return 0;
+	}
 
 	if (filesv.len < 14 || strncmp("PWUtili magic\n", filesv.str, 14)) {
 		free(filecontent);
