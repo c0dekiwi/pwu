@@ -784,6 +784,7 @@ void cmd_modify(struct entries *entries, int id, char **fields) {
 	for (int i = 0; i < FIELD_LEN; i++) {
 		if (fields[i]) {
 			if (!strlen(fields[i])) {
+				newval = NULL;
 				do {
 					free(newval);
 					newval = prompt_for_field(i);
